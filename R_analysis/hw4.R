@@ -1,0 +1,69 @@
+#######------------------1-------------##########
+p<-matrix(c(0.5,0.5,0,0.25,0.5,0.25,0,0.5,0.5),3,3,byrow = T)
+p%*%p
+require(expm)
+p%^%5
+p%^%10
+p%^%25
+###################################
+p<-matrix(c(1,0,0,0.25,0.5,0.25,0,0,1),3,3,byrow = T)
+p%*%p
+require(expm)
+p%^%5
+p%^%10
+p%^%25
+p%^%100
+p%^%1000
+p%^%500000
+##################################
+p<-matrix(c(1,0,0,0,0,.25,.5,.25,0,0,0,.25,.5,.25,0,0,0,.25,.5,.25,0,0,0,.5,.5),5,5,byrow=T,dimnames=list(c('A','B','C','D','E'),c('A','B','C','D','E')))
+p%*%p
+require(expm)
+p%^%5
+p%^%10
+p%^%25
+p%^%100
+p%^%1000
+p%^%500000
+#######------------------2-------------##########
+library(foreign)
+data<-read.dta('union_pred.dta')
+(prior<-table(data$prior_union,data$union))
+p<-as.matrix(prop.table(prior,1))
+########################################
+fit<-glm(union~year+age+grade+south+black+smsa+prior_union,family=binomial,data=data)
+summary(fit)
+########################################
+data1<-data
+data1['prior_union']<-0
+pred01<-predict(fit, data1,'response')
+pred00<-1-pred01
+########################################
+data1['prior_union']<-1
+pred11<-predict(fit, data1,'response')
+pred10<-1-pred11
+M<-matrix(c(mean(pred00),mean(pred01),mean(pred10),mean(pred11)),2,2,byrow=T,dimnames=list(c(0,1),c(0,1)))
+M%*%M
+M%^%10000000
+prop.table(table(upred$union))
+#####--------------3---------------########
+n1<-rnorm(1000,0,1)
+plot(n1,ylim=c(-10,10),main='N(0,1)',type='l')
+n2<-rnorm(1000,0,sqrt(2))
+plot(n2,ylim=c(-10,10),main='N(0,2)',type='l')
+n3<-rnorm(1000,0,sqrt(4))
+plot(n3,ylim=c(-10,10),main='N(0,4)',type='l')
+###########################################
+X1<-rnorm(1000)
+X2<-rnorm(1000)
+fit<-lm(X1~X2)
+summary(fit)
+############################
+LIST<-rep(NA,1000)
+for (i in 1:1000){
+  X1<-rnorm(1000)
+  X2<-rnorm(1000)
+  fit<-lm(X1~X2)
+  LIST[i]<-fit$coef[2]
+}
+hist(LIST,breaks=70)
